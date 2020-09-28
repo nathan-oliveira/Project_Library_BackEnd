@@ -9,8 +9,11 @@ class UserController {
   public async saveUser(req: Request, res: Response): Promise<Response> {
     const { name, email, password } = req.body
     const passwordHash = await bcrypt.hash(req.body.password, 8)
+    const userExist = await getRepository(User).find({ where: { email } })
 
     if (!name || !email || !password) return res.status(422).json({ message: "Favor preencha todos os campos de cadastro." })
+
+    if (userExist[0]) return res.status(422).json({ message: "Usuário já cadastrado." })
 
     const user = await getRepository(User).save({ name, email, password: passwordHash })
 
@@ -18,7 +21,7 @@ class UserController {
   }
 
   public async listUser(req: Request, res: Response): Promise<Response> {
-    const users = await getRepository(User).find()
+    const users = await getRepository(User).find({ where: { id: req.params.id } })
 
     return res.json(users)
   }

@@ -35,7 +35,7 @@ class Server {
         })
       }
 
-      return express.response.status(500).json({
+      return res.status(500).json({
         status: 'error',
         message: 'Internal server error'
       })
